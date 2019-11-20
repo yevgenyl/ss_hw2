@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -fPIC
 DEPS = myBank.h
 
 %.o: %.c $(DEPS)
@@ -12,11 +12,11 @@ mybanks: myBank.o
 mybankd: myBank.o
 	$(CC) -fPIC -shared -o libmyBank.so myBank.o 
 
-mains: mybanks main.c
+mains: libmyBank.a main.c
 	$(CC) -c -Wall main.c
 	$(CC) -o mains main.o libmyBank.a
 
-maind: mybankd main.c
+maind: libmyBank.so main.c
 	$(CC) -c -Wall main.c 
 	$(CC) -o maind main.o libmyBank.so
 
