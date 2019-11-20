@@ -97,7 +97,7 @@ void withdraw() {
 							accountID, data[row + 1][column]);
 				} else {
 					printf(
-							"Illegal operation - not enough balance for withdraw");
+							"Illegal operation - not enough balance for withdraw\n");
 				}
 			} else {
 				printf("Error - Account doesn't exist\n");
