@@ -7,8 +7,23 @@
 #include <stdio.h>
 #include "myBank.h"
 
-int needToRun = 1;
+int needToRun = 1; // Flag to keep running the menu.
 
+/*
+ * Function - showMenu
+ * Shows user options menu.
+ */
+void showMenu(){
+	printf(" \t------- Menu -------\nO - Open new account B - Check balance\nD - Deposit \t     "
+			"W - Withdraw\nC - Close account    I - Add interest rate\nP - Print all \t     "
+			"E - Exit the program\n\n");
+}
+
+/*
+ * Function - action
+ * Takes care of all possible user choices.
+ * Parameter1: char type - type of action.
+ */
 void action(char type) {
 	switch(type){
 	case 'O':
@@ -43,12 +58,13 @@ void action(char type) {
 }
 
 int main() {
-	initialize();
-	while (needToRun) {
-		char x;
+	initialize(); // Put zeros inside array of data.
+	showMenu(); // Show options menu to user.
+	while (needToRun) { // Keep showing menu.
+		char choice; // User choice.
 		printf("Transaction type? \n");
-		scanf(" %c", &x);
-		action(x);
+		scanf(" %c", &choice);
+		action(choice); // Take care of choice.
 	}
 	return 0;
 }
