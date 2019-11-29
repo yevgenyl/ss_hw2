@@ -37,6 +37,7 @@ void action(char type) {
 		needToRun = 0;
 		break;
 	default:
+		printf("Invalid input '%c' available options: O B D W C I P E\n",type);
 		break;
 	}
 }
@@ -45,7 +46,7 @@ int main() {
 	initialize();
 	while (needToRun) {
 		char x;
-		printf("Transaction type? ");
+		printf("Transaction type? \n");
 		scanf(" %c", &x);
 		action(x);
 	}

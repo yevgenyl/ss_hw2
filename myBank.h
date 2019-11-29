@@ -8,6 +8,7 @@
 #ifndef MYBANK_H_
 #define MYBANK_H_
 #define BANK_SIZE 50
+#define EPSILON 0.0000000001
 
 void initialize();
 void openAccount();

@@ -10,6 +10,11 @@
 double data[2][BANK_SIZE];
 int currentSize = 0;
 
+double round(double num) {
+	long value = (long) (num * 100);
+	return (double) value / 100;
+}
+
 void initialize() {
 	for (int i = 0; i < 2; i++)
 		for (int j = 0; j < BANK_SIZE; j++)
@@ -22,37 +27,44 @@ void openAccount() {
 	if (currentSize <= 50) {
 		while (column < BANK_SIZE) {
 			if (!(int) data[row][column]) {
-				printf("Please enter initial deposit sum for new account: ");
-				scanf(" %lf", &init);
-				data[row][column] = 1.0;
-				data[row + 1][column] = init;
-				printf("Account No %d\n", account + column);
-				currentSize++;
-				break;
+				printf("Initial deposit?: \n");
+				if (scanf(" %lf", &init)) {
+					data[row][column] = 1.0;
+					data[row + 1][column] = round(init);
+					printf("Account No %d\n", account + column);
+					currentSize++;
+					break;
+				} else {
+					printf("Only real numbers allowed..\n ");
+					break;
+				}
 			}
 			column++;
 		}
 	} else {
-		printf("No available accounts..");
+		printf("No available accounts..\n");
 	}
 }
 
 void checkBalance() {
 	int row = 0, column = 0, account = 901;
 	int accountID = 0;
-	printf("Please enter account number to check balance: ");
-	scanf(" %d", &accountID);
-	while (column < BANK_SIZE) {
-		if (accountID == (column + account)) {
-			if ((int) data[row][column]) {
-				printf("Balance for account %d is %0.2lf\n", accountID,
-						data[row + 1][column]);
-			} else {
-				printf("Error - Account doesn't exist\n");
+	printf("Account number?: \n");
+	if (scanf(" %d", &accountID)) {
+		while (column < BANK_SIZE) {
+			if (accountID == (column + account)) {
+				if ((int) data[row][column]) {
+					printf("Balance for account %d is %0.2lf\n", accountID,
+							data[row + 1][column]);
+				} else {
+					printf("Error - Account doesn't exist\n");
+				}
+				break;
 			}
-			break;
+			column++;
 		}
-		column++;
+	} else {
+		printf("Only integers allowed..\n ");
 	}
 }
 
@@ -60,22 +72,28 @@ void deposit() {
 	int row = 0, column = 0, account = 901;
 	int accountID = 0;
 	double amount = 0.0;
-	printf("Please enter account number for deposit: ");
-	scanf(" %d", &accountID);
-	printf("Please enter deposit amount: ");
-	scanf(" %lf", &amount);
-	while (column < BANK_SIZE) {
-		if (accountID == (column + account)) {
-			if ((int) data[row][column]) {
-				data[row + 1][column] += amount;
-				printf("Balance for account %d is %0.2lf\n", accountID,
-						data[row + 1][column]);
-			} else {
-				printf("Error - Account doesn't exist\n");
+	printf("Account number?: \n");
+	if (scanf(" %d", &accountID)) {
+		printf("Amount?: \n");
+		if (scanf(" %lf", &amount)) {
+			while (column < BANK_SIZE) {
+				if (accountID == (column + account)) {
+					if ((int) data[row][column]) {
+						data[row + 1][column] += round(amount);
+						printf("Balance for account %d is %0.2lf\n", accountID,
+								data[row + 1][column]);
+					} else {
+						printf("Error - Account doesn't exist\n");
+					}
+					break;
+				}
+				column++;
 			}
-			break;
+		} else {
+			printf("Only real numbers allowed..\n ");
 		}
-		column++;
+	} else {
+		printf("Only integers allowed..\n ");
 	}
 }
 
@@ -83,61 +101,78 @@ void withdraw() {
 	int row = 0, column = 0, account = 901;
 	int accountID = 0;
 	double amount = 0.0;
-	printf("Please enter account number for withdraw: ");
-	scanf(" %d", &accountID);
-	printf("Please enter withdraw amount: ");
-	scanf(" %lf", &amount);
-	while (column < BANK_SIZE) {
-		if (accountID == (column + account)) {
-			if ((int) data[row][column]) { // If account exist
-				if (data[row + 1][column] >= amount) { // If there is enough balance for withdraw
-					data[row + 1][column] -= amount; // Subtract withdraw amount from total balance
-					printf(
-							"Updated balance for account %d  after withdraw is %0.2lf\n",
-							accountID, data[row + 1][column]);
-				} else {
-					printf(
-							"Illegal operation - not enough balance for withdraw\n");
+	printf("Account number?: \n");
+	if (scanf(" %d", &accountID)) {
+		printf("Amount?: \n");
+		if (scanf(" %lf", &amount)) {
+			while (column < BANK_SIZE) {
+				if (accountID == (column + account)) {
+					if ((int) data[row][column]) { // If account exist
+						if (data[row + 1][column] + EPSILON >= amount) { // If there is enough balance for withdraw
+							data[row + 1][column] -= (round(amount) - EPSILON); // Subtract withdraw amount from total balance
+							printf(
+									"Updated balance for account %d after withdraw is %0.2lf\n",
+									accountID, data[row + 1][column]);
+						} else {
+							printf(
+									"Illegal operation - not enough balance for withdraw\n");
+						}
+					} else {
+						printf("Error - Account doesn't exist\n");
+					}
+					break;
 				}
-			} else {
-				printf("Error - Account doesn't exist\n");
+				column++;
 			}
-			break;
+		} else {
+			printf("Only real numbers allowed..\n ");
 		}
-		column++;
+	} else {
+		printf("Only integers allowed..\n ");
 	}
 }
 
 void closeAccount() {
 	int row = 0, column = 0, account = 901;
 	int accountID = 0;
-	printf("Please enter account number to close: ");
-	scanf(" %d", &accountID);
-	while (column < BANK_SIZE) {
-		if (accountID == (column + account)) {
-			if ((int) data[row][column]) {
-				data[row][column] = 0.0;
-				data[row+1][column] = 0.0;
-				printf("Successfully closed account %d\n",accountID);
-			} else {
-				printf("Error - Account doesn't exist\n");
+	int found = 0;
+	printf("Acount number?: ");
+	if (scanf(" %d", &accountID)) {
+		while (column < BANK_SIZE) {
+			if (accountID == (column + account)) {
+				found = 1;
+				if ((int) data[row][column]) {
+					data[row][column] = 0.0;
+					data[row + 1][column] = 0.0;
+					printf("Successfully closed account %d\n", accountID);
+				} else {
+					printf("Error - Account doesn't exist\n");
+				}
+				break;
 			}
-			break;
+			column++;
 		}
-		column++;
+		if (!found) {
+			printf("Error - Account doesn't exist\n");
+		}
+	} else {
+		printf("Only integers allowed..\n ");
 	}
 }
 
 void addRate() {
 	int row = 0, column = 0;
 	double interest_rate = 0.0;
-	printf("Please enter interest rate: ");
-	scanf(" %lf", &interest_rate);
-	while (column < BANK_SIZE) {
-		if ((int) data[row][column]) { // If account is open
-			data[row+1][column] *= (1+((interest_rate)/100));
+	printf("Interest rate?: \n");
+	if (scanf(" %lf", &interest_rate)) {
+		while (column < BANK_SIZE) {
+			if ((int) data[row][column]) { // If account is open
+				data[row + 1][column] *= (1 + ((interest_rate) / 100));
+			}
+			column++;
 		}
-		column++;
+	} else {
+		printf("Only real numbers allowed..\n ");
 	}
 }
 
